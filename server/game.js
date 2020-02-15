@@ -11,6 +11,7 @@ class Room {
     this.board = Array(9).fill()
     this.status = 0
     this.lastTurn = null
+    this.updatedAt = Date.now()
   }
 
   join(player) {
@@ -48,6 +49,7 @@ class Room {
   }
 
   _notify() {
+    this.updatedAt = Date.now()
     emitter.emit('room', this.id)
     emitter.emit('rooms')
   }
@@ -57,7 +59,7 @@ class Room {
 class TicTacToe {
   constructor() {
     this._rooms = {}
-    this._clearEmptyRoomsPeriodically()
+    this._clearUnusedRoomsPeriodically()
   }
 
   create(name) {
@@ -76,10 +78,10 @@ class TicTacToe {
       .filter(room => room.status === 1)
   }
 
-  _clearEmptyRoomsPeriodically(period = 6e4) {
+  _clearUnusedRoomsPeriodically(period = 6e4) {
     setInterval(() => {
       for (let room of Object.values(this._rooms)) {
-        if (room.status === 0)
+        if (room.status === 0 || (Date.now() - room.updatedAt) > period)
           delete this._rooms[room.id]
       }
     }, period)
