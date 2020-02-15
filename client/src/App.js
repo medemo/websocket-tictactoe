@@ -8,7 +8,7 @@ import { useJoinedRoom } from './hooks'
 
 function App() {
   const player = useSelector(state => state.player)
-  const joinedRoom = useJoinedRoom('app')
+  const joinedRoom = useJoinedRoom()
 
   if (!player) return <NameForm />
   if (!joinedRoom) return <Home />

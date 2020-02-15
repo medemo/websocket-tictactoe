@@ -46,7 +46,7 @@ class Board extends React.Component {
 }
 
 function Game(props) {
-  const joinedRoom = useJoinedRoom('game')
+  const joinedRoom = useJoinedRoom()
 
   const ready = joinedRoom.status === 2
   const squares = joinedRoom.board.map(n => (joinedRoom.players[n]?.name ?? null))

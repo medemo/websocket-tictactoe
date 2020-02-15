@@ -15,7 +15,7 @@ class Room {
   }
 
   join(player) {
-    if (this.players.length > 2 || this.players.includes(player)) return
+    if (this.players.length >= 2 || this.players.includes(player)) return
     this.players.push(player)
     if (this.players.length === 2) {
       this.status = 2
