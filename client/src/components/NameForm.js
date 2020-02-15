@@ -1,16 +1,24 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
+import socket from '../socket'
+
 export default function NameForm() {
   const [playerName, setPlayerName] = useState('')
   const dispatch = useDispatch()
 
   const handleSubmit = e => {
     e.preventDefault()
+    socket.emit('set-name', playerName)
+
     dispatch({
-      type: 'SET_NAME',
-      name: playerName
+      type: 'SET_PLAYER',
+      player: {
+        id: socket.id,
+        name: playerName
+      }
     })
+
     setPlayerName('')
   }
 

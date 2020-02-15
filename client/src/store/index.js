@@ -1,45 +1,37 @@
 import { createStore } from 'redux'
 
+
 const initialState = {
-  name: '',
+  player: null,
   rooms: [],
-  joinedRoomId: null
+  joinedRoom: null
 }
 
 function reducer(state = initialState, action) {
   switch (action.type) {
-    case 'SET_NAME':
+    case 'SET_PLAYER':
       return {
         ...state,
-        name: action.name
+        player: action.player
       }
     case 'ROOMS_UPDATED':
       return {
         ...state,
         rooms: action.rooms
       }
-    case 'ROOM_UPDATED':
-      const index = state.rooms.findIndex(r => r.id === action.room.id)
-      if (index === -1) return state
+    case 'JOINED_ROOM_UPDATED':
       return {
         ...state,
-        rooms: [
-          ...state.rooms.slice(0, index),
-          action.room,
-          ...state.rooms.slice(index + 1),
-        ]
-      }
-    case 'ROOM_JOINED':
-      return {
-        ...state,
-        joinedRoomId: action.roomId
+        joinedRoom: action.room
       }
     default:
       return state
   }
 }
 
-export default createStore(
+const store = createStore(
   reducer,
   window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 )
+
+export default store

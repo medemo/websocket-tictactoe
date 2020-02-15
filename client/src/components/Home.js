@@ -1,23 +1,21 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
 
-import socket from './socket'
-import { useRooms } from './hooks'
+import socket from '../socket'
+import { useRooms } from '../hooks'
 
 
 export default function Home() {
-  const playerName = useSelector(state => state.name)
   const rooms = useRooms()
   const [roomName, setRoomName] = useState('')
 
   const handleCreateRoom = e => {
     e.preventDefault()
-    socket.emit('create-room', { room: roomName, player: playerName })
+    socket.emit('create-room', roomName)
     setRoomName('')
   }
 
   const joinRoom = roomId => {
-    socket.emit('join-room', { room: roomId, player: playerName })
+    socket.emit('join-room', roomId)
   }
 
 

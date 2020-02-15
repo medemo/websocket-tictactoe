@@ -4,67 +4,53 @@ import socket from '../socket'
 
 export function useRooms() {
   const rooms = useSelector(state => state.rooms)
-  const joinedRoomId = useSelector(state => state.joinedRoomId)
   const dispatch = useDispatch()
 
   useEffect(() => {
+    socket.emit('get-rooms')
+
     const updateRooms = rooms => {
       dispatch({
         type: 'ROOMS_UPDATED',
-        rooms: filterAvailableRooms(rooms, [joinedRoomId])
+        rooms
       })
     }
 
-    fetch('http://localhost:3000/rooms')
-      .then(res => res.json())
-      .then(updateRooms)
+    if (!socket.hasListeners('rooms')) {
+      socket.on('rooms', updateRooms)
 
-    socket.on('rooms-updated', updateRooms)
-
-    return () => {
-      socket.off('rooms-updated', updateRooms)
+      return () => {
+        socket.off('rooms', updateRooms)
+      }
     }
-
-  }, [dispatch, joinedRoomId])
+  }, [dispatch])
 
   return rooms
 }
 
-export function useJoinedRoom() {
-  const rooms = useSelector(state => state.rooms)
-  const joinedRoomId = useSelector(state => state.joinedRoomId)
+
+export function useJoinedRoom(component) {
+  const joinedRoom = useSelector(state => state.joinedRoom)
 
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const updateJoinedRoomId = roomId => {
-      dispatch({
-        type: 'ROOM_JOINED',
-        roomId
-      })
-    }
-
     const updateJoinedRoom = room => {
+      const updatedRoom = room.status === 0 ? null : room
       dispatch({
-        type: 'ROOM_UPDATED',
-        room
+        type: 'JOINED_ROOM_UPDATED',
+        room: updatedRoom
       })
     }
 
-    socket.on('room-joined', updateJoinedRoomId)
-    socket.on('room-updated', updateJoinedRoom)
+    if (!socket.hasListeners('joined-room')) {
+      socket.on('joined-room', updateJoinedRoom)
 
-    return () => {
-      socket.off('room-joined', updateJoinedRoomId)
-      socket.off('room-updated', updateJoinedRoom)
+      return () => {
+        socket.off('joined-room', updateJoinedRoom)
+      }
     }
   }, [dispatch])
 
-  return rooms.find(room => room.id === joinedRoomId)
-}
-
-function filterAvailableRooms(rooms, includedRoomsId = []) {
-  return Object.entries(rooms)
-    .filter(([id, data]) => data.players.length < 2 || includedRoomsId.includes(id))
-    .map(([id, data]) => ({ id, ...data }))
+  return joinedRoom
 }

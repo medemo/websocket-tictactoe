@@ -1,19 +1,19 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 
-import Game from './Game'
-import Home from './Home'
-import NameForm from './NameForm'
+import Game from './components/Game'
+import Home from './components/Home'
+import NameForm from './components/NameForm'
 import { useJoinedRoom } from './hooks'
 
-
 function App() {
-  const name = useSelector(state => state.name)
-  const joinedRoom = useJoinedRoom()
+  const player = useSelector(state => state.player)
+  const joinedRoom = useJoinedRoom('app')
 
-  if (!name) return <NameForm />
+  if (!player) return <NameForm />
   if (!joinedRoom) return <Home />
   return <Game />
 }
 
 export default App
+
